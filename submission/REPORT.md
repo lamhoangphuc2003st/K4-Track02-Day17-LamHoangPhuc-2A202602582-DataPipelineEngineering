@@ -143,3 +143,34 @@ RESULT: 8/18 checks — FAILURES ABOVE
   [XX ] Rerun   re-run 2026-08-12 three times -> Gold checksum identical to a fresh build
 pytest: 9 failed, 25 passed
 ```
+
+## Bonus
+
+### B1 — Bước LLM có cache (`pipeline/llm_label.py`)
+
+- Khoá cache `llm_label_cache` = `sha256(text ticket)` + `model` + `prompt_version`
+  (PRIMARY KEY). Câu trả lời thô được cache cả khi sai schema, nên chạy lại tốn 0 lời gọi.
+- Ước lượng chi phí (tokens × giá) **chỉ cho các cache miss**, tính trước khi gọi model.
+- `gold_ticket_labels` và `llm_label_quarantine` được dựng lại từ cache cho model + prompt
+  hiện tại (overwrite), mỗi hàng mang `model` và `prompt_version`; đổi prompt thì mọi
+  ticket miss cache và được gắn nhãn lại có chủ đích.
+- Câu trả lời sai schema (ví dụ `"export"`) vào quarantine kèm câu trả lời thô, không vào Gold.
+
+```text
+$ .\.venv\Scripts\python.exe -m scripts.bonus_llm       # make bonus-llm
+=== bonus: LLM labelling of 11 live tickets ===
+  cost estimate before running: ~484 tokens = $0.0010 per full run
+  [OK ] first run labels every live ticket
+  [OK ] re-run with same model + prompt makes 0 LLM calls
+  [OK ] every Gold label is bug / billing / other
+  [OK ] off-schema answers go to llm_label_quarantine
+  [OK ] new prompt version re-labels on purpose
+  [OK ] labels carry their prompt version
+BONUS PASS
+```
+
+### B2 — Brainstorm: [`bonus/DESIGN.md`](../bonus/DESIGN.md)
+
+Pipeline dữ liệu cho SmartReceipt VN (ảnh hoá đơn → VLM trích xuất → PhoBERT phân loại):
+5 câu hỏi then chốt kèm quyết định và đánh đổi, 2 phương án bị loại (OCR + rule,
+Lambda architecture), sơ đồ kiến trúc, và liên hệ với prototype B1.
