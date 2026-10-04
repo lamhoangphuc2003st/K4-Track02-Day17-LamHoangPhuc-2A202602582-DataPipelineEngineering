@@ -1,0 +1,9 @@
+# Lab 17 — re-run check for 2026-08-12
+
+run                     gold_feature_daily    gold_training_set     gold_doc_chunks       gold (combined)
+fresh build             8630e04a61d1          9370ca77af23          cb9ebd12fdcc          39e115c510ecdf526800eac227158a4f
+re-run #1 of 2026-08-12 8630e04a61d1          9370ca77af23          cb9ebd12fdcc          39e115c510ecdf526800eac227158a4f
+re-run #2 of 2026-08-12 8630e04a61d1          9370ca77af23          cb9ebd12fdcc          39e115c510ecdf526800eac227158a4f
+re-run #3 of 2026-08-12 8630e04a61d1          9370ca77af23          cb9ebd12fdcc          39e115c510ecdf526800eac227158a4f
+
+RESULT: PASS — 3 re-runs, identical checksums

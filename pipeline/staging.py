@@ -37,7 +37,9 @@ def ticket_changes_sql(upto: str | None = None, batch: str | None = None) -> str
     return f"""
     SELECT * FROM (
         SELECT
-            j->'value'->'after'->>'ticket_id'                       AS ticket_id,
+            -- a delete (op = 'd') has after = null: the key lives in `before`
+            coalesce(j->'value'->'after'->>'ticket_id',
+                     j->'value'->'before'->>'ticket_id')            AS ticket_id,
             _op,
             (j->'value'->'source'->>'lsn')::BIGINT                  AS _lsn,
             make_timestamp((j->'value'->'source'->>'ts_ms')::BIGINT * 1000) AS _changed_at,
